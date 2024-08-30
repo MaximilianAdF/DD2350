@@ -10,7 +10,7 @@
 def SortWords():
 
     indexList = []
-    file1 = open('WordList.txt', 'r')
+    file1 = open('rawindex.txt', 'r')
     file2 = open('ListOfIndex.txt', 'w')
     prevline = file1.readline().replace("\n","").split(" ")
     if (len(prevline[0])>=3):
