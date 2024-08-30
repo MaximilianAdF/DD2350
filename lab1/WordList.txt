@@ -1,0 +1,16 @@
+a 1
+a 2
+ab 3
+ab 12
+abc 1234532
+abc 1234532
+abc 1234532
+abc 1234532
+abc 1234532
+abc 1234532
+abc 1234532
+abc 1234532
+abcd 12312
+abbew 9841
+ddndn 1231
+ddndndn 15
