@@ -9,6 +9,22 @@ def binary_search_in_file( word):
 
 
     while left <= right:
+
+        if right - left < 1000: #om det är mindre än 100 chars mellan punkterna sök linjärt
+            file1.seek(left)
+            while left <= right:
+                line = file1.readline().strip().split(" ")
+
+                if not line or len(line[0]) == 0:
+                    break
+
+                if line[0] == word:
+                    return line[1].split()
+
+                left = file1.tell()
+
+            break  # Avsluta binärsöknings-loopen eftersom vi har gått över till sekventiell sökning
+
         mid = (left + right) // 2
         file1.seek(mid)
 
@@ -71,16 +87,16 @@ def Konkordans():
         print("Dose not exist")
         return
 
-    rows =GetWordsFromText(word,indexes)
+    rows = GetWordsFromText(word,indexes)
     print(rows)
 
     if (len(rows)>25):
         awnser = input("Ther are more than 25 ocurences print? Y/N: ").lower()
-        print("The word "+ word + " ocurrs "+ len(rows)+ " times.")
+        print("The word "+ word + " occurs "+ str(len(rows)) + " times.")
         if(awnser=="y"):
             PrintRows(rows)
     else:
-        print("The word "+ word + " ocurrs " + str(len(rows)) + " times.")
+        print("The word "+ word + " occurs " + str(len(rows)) + " times.")
         PrintRows(rows)
 
 
