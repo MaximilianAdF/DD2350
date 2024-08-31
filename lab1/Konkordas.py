@@ -1,4 +1,13 @@
 
+def WordHash(word:str)->int:
+    hash = 0
+    for i in range(len(word)):
+        hash+= (29**i)*(ord(word[i]) - 96)
+       
+    return hash
+    
+
+
 
 def binary_search_in_file( word):
     word = word[:3]
@@ -8,7 +17,7 @@ def binary_search_in_file( word):
     right = file1.tell()
 
 
-    while left <= right:
+    while True:
 
         if right - left < 10000: #om det är mindre än 10000 chars mellan punkterna sök linjärt
             file1.seek(left)
@@ -34,18 +43,12 @@ def binary_search_in_file( word):
 
         line = file1.readline().replace("\n","").split(" ")
 
-        if not line or len(line[0]) == 0:
-            right = mid - 1
-            continue
-
-        if line[0] == word:
-            return line[1].split()
-        elif line[0] < word:
-            left = file1.tell()
+        if (WordHash(word) > WordHash(line[0])):# kollar om ordet är större än det i mitten
+            left = mid
         else:
-            right = mid - 1
+            right = mid
 
-    return []  
+    return []  # Returnera en tom lista om ordet inte finns i filen
 
 
 def GetWordsFromText(word,indexes): ## not done
