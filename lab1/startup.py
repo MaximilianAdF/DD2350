@@ -1,12 +1,5 @@
 
 
-# Using readline()
-
-
-
-
-
-
 def SortWords():
 
     indexList = []
@@ -57,6 +50,7 @@ def SortWords():
                 prevline = line
         else:
             prevline = line
+
 
 
 

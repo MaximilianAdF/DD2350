@@ -1,14 +1,35 @@
 
 
-def FindWordIndexes(word): ## gör bättre
+def binary_search_in_file( word):
     word = word[:3]
     file1 = open('lab1/ListOfIndex.txt', 'r')
-    while True:
+    left = 0
+    file1.seek(0, 2)  # Gå till slutet av filen
+    right = file1.tell()
+
+
+    while left <= right:
+        mid = (left + right) // 2
+        file1.seek(mid)
+
+        # Flytta till början av nästa rad om vi är mitt i en rad
+        if mid > 0:
+            file1.readline()
+
         line = file1.readline().replace("\n","").split(" ")
-        if (line[0][:3] == word):
-            file1.close()
+
+        if not line or len(line[0]) == 0:
+            right = mid - 1
+            continue
+
+        if line[0] == word:
             return line[1].split()
-    return
+        elif line[0] < word:
+            left = file1.tell()
+        else:
+            right = mid - 1
+
+    return []  
 
 
 def GetWordsFromText(word,indexes): ## not done
@@ -45,7 +66,10 @@ def PrintRows(rows:list):
 def Konkordans():
     word = input("Type word to serch: ").lower()
 
-    indexes = FindWordIndexes(word)
+    indexes = binary_search_in_file(word)
+    if(len(indexes)==0):
+        print("Dose not exist")
+        return
 
     rows =GetWordsFromText(word,indexes)
     print(rows)
