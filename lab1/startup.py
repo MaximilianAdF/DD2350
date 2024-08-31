@@ -59,42 +59,8 @@ def SortWords():
             prevline = line
 
 
-def FindWordIndexes(word): ## gör bättre
-    word = word[:3]
-    file1 = open('lab1/ListOfIndex.txt', 'r')
-    while True:
-        line = file1.readline().replace("\n","").split(" ")
-        if (line[0][:3] == word):
-            file1.close()
-            return line[1].split()
-    return
 
 
-def GetWordsFromText(word,indexes): ## not done
-    Requestext= []
-
-
-    file1 = open('lab1/ListOfIndex.txt', 'r')
-    file2 = open('lab1/korpus.txt', 'r')
-    file3 = open('lab1/rawindex.txt', 'r')
-
-    for i in range(len(indexes)): ## hitta rätt index
-        file3.seek(int(indexes[i]))
-
-        line = file3.readline().replace("\n","").split(" ")
-        if (line[0]== word):
-            break
-
-    print(line)
-
-    while line[0]==word:# ta ut rätt saker från korpus
-        file2.seek(int(line[1])-30)
-        Requestext.append(file2.read(60+len(word)).replace("\n"," "))## fixa EDGE CASES
-        line = file3.readline().replace("\n","").split(" ")
-    return Requestext
 
 SortWords()
 
-indexes = FindWordIndexes("och")
-row = GetWordsFromText("och",indexes)
-print(row)
