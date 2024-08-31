@@ -5,11 +5,8 @@ def SortWords():
     indexList = []
     file1 = open('lab1/rawindex.txt', 'r')
     file2 = open('lab1/ListOfIndex.txt', 'w')
-    prevtell = file1.tell()
+    prevtell = 0
     prevline = file1.readline().replace("\n","").split(" ")
-
-    print("prevline:", prevline)
-    print(prevtell)
     if (len(prevline[0])>=3):
         threeLetter=prevline[0][:3] #abc av ABCD
     else:
@@ -30,10 +27,7 @@ def SortWords():
             file2.close()
             file1.close()
             #end the program
-            break
-
-            
-
+            return
 
         #check if the same word
         if (prevline[0] != line[0]):
