@@ -2,11 +2,9 @@
 def WordHash(word:str)->int:
     hash = 0
     for i in range(len(word)):
-        hash+= (29**i)*(ord(word[i]) - 96)
+        hash+=  ord(word[i]) * (128 ** (2 - i))
        
     return hash
-    
-
 
 
 def binary_search_in_file( word):
@@ -51,7 +49,9 @@ def binary_search_in_file( word):
     return []  # Returnera en tom lista om ordet inte finns i filen
 
 
-def GetWordsFromText(word,indexes): ## not done
+
+
+def GetWordsFromText(word,indexes): ## Tar ut 30+ ord + 30 från main texten
     Requestext= []
 
 
