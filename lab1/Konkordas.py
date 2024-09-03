@@ -1,68 +1,47 @@
+def WordHash(word: str) -> int:
+    hash_value = 0
+    base = 29  # Since we have 29 characters including å, ä, ö
 
-def WordHash(word:str)->int:
-    hash = 0
-    for i in range(len(word)):
-        hash+=  ord(word[i]) * (128 ** (2 - i))
-       
-    return hash
-
-
-def binary_search_in_file( word):
-    word = word[:3]
-    file1 = open('lab1/ListOfIndex.txt', 'r')
-    left = 0
-    file1.seek(0, 2)  # Gå till slutet av filen
-    right = file1.tell()
-
-
-    while True:
-
-        if right - left < 10000: #om det är mindre än 10000 chars mellan punkterna sök linjärt
-            file1.seek(left)
-            while left <= right:
-                line = file1.readline().strip().split(" ")
-
-                if not line or len(line[0]) == 0:
-                    break
-
-                if line[0] == word:
-                    return line[1].split()
-
-                left = file1.tell()
-
-            break  # Avsluta binärsöknings-loopen eftersom vi har gått över till sekventiell sökning
-
-        mid = (left + right) // 2
-        file1.seek(mid)
-
-        # Flytta till början av nästa rad om vi är mitt i en rad
-        if mid > 0:
-            file1.readline()
-
-        line = file1.readline().replace("\n","").split(" ")
-
-        if (WordHash(word) > WordHash(line[0])):# kollar om ordet är större än det i mitten
-            left = mid
+    for i, char in enumerate(word):
+        if 'a' <= char <= 'z':  # Map a-z
+            char_value = ord(char) - ord('a') +1
+        elif char == 'å':  # Map å to 26
+            char_value = 27
+        elif char == 'ä':  # Map ä to 27
+            char_value = 28
+        elif char == 'ö':  # Map ö to 28
+            char_value = 29
         else:
-            right = mid
+            raise ValueError(f"Unsupported character: {char}")
 
-    return []  # Returnera en tom lista om ordet inte finns i filen
+        # Calculate the hash, considering the character position
+        hash_value +=  char_value *(base**(len(word)-i -1))
 
+    return hash_value -1
 
+def GetIndex(word):
+    hash = WordHash(word)
+    file1 = open('lab1/ListOfIndex.txt', 'r')
+    file1.seek(66*hash)
+    text = file1.readline().replace("\n","")
+    print(len(text))
+    print("this is text : " + text)
+    file1.close()
+    return int(text)
 
-
-def GetWordsFromText(word,indexes): ## Tar ut 30+ ord + 30 från main texten
+def GetWordsFromText(word,index): ## Tar ut 30+ ord + 30 från main texten
     Requestext= []
 
 
     file1 = open('lab1/rawindex.txt', 'r')
     file2 = open('lab1/korpus.txt', 'r')
 
-    for i in range(len(indexes)): ## hitta rätt index
-        file1.seek(int(indexes[i]))
+
+    file1.seek(index)
+
+    line = file1.readline().replace("\n","").split(" ")
+    while line[0] != word:
         line = file1.readline().replace("\n","").split(" ")
-        if (line[0]== word):
-            break
 
     while line[0]==word:# ta ut rätt saker från korpus
         if (int(line[1])-30 < 0): #ett av de första orden
@@ -85,12 +64,13 @@ def PrintRows(rows:list):
 def Konkordans():
     word = input("Type word to serch: ").lower()
 
-    indexes = binary_search_in_file(word)
-    if(len(indexes)==0): #checks if word exists
+    index = GetIndex(word)
+
+    if(index==-1): #checks if word exists
         print("Dose not exist")
         return
 
-    rows = GetWordsFromText(word,indexes)
+    rows = GetWordsFromText(word,index)
 
     if (len(rows)>25): # check number of occurences
         awnser = input("Ther are more than 25 ocurences print? Y/N: ").lower()
