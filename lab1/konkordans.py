@@ -8,20 +8,19 @@ hash_path = '/home/m/a/maadf/Documents/DD2350/lab1/hash.txt'
 
 def three_prefix_hash(word) -> int:
     prefix = word[:3].lower()
-    hash_idx = 0
+    hash_idx  = 0
 
-    for i, c in enumerate(prefix):
-        if ord(c) >= ord('a') and ord(c) <= ord('z'): # a-z, UTF-8 97-122
-            hash_idx += (30**i) * (ord(c) - ord('a') + 1)
-        elif ord(c) == ord('å'):
-            hash_idx += (30**i) * 27 # å, UTF-8 229
-        elif ord(c) == ord('ä'):
-            hash_idx += (30**i) * 28 # ä, UTF-8 228
-        elif ord(c) == ord('ö'):
-            hash_idx += (30**i) * 29 # ö, UTF-8 246
+    for i, char in enumerate(prefix):
+        if 'a' <= char <= 'z':  # Map a-z
+            hash_idx += (30**i) * (ord(char) - ord('a') + 1)
+        elif char == 'å':  # Map å to 27
+            hash_idx += (30**i) * (27)
+        elif char == 'ä':  # Map ä to 28
+            hash_idx += (30**i) * (28)
+        elif char == 'ö':  # Map ö to 29
+            hash_idx += (30**i) * (29)
 
-    return hash_idx * 8
-
+    return hash_idx  * 8
 
 
 def binary_search_in_file(word) -> int:
@@ -56,6 +55,33 @@ def binary_search_in_file(word) -> int:
         return -1
 
 
+def linear_search_in_file(word) -> int:
+    with open(raw_index_path, 'r', encoding="latin-1") as raw_index_file, \
+        open(bucket_path, 'r') as bucket_file, \
+        open(hash_path, 'rb') as hash_file:
+
+
+        hash_file.seek(three_prefix_hash(word))
+        hash_data = hash_file.read(8)
+
+        bucket_offset = int.from_bytes(hash_data, byteorder='big')
+        bucket_file.seek(bucket_offset)
+
+        raw_indices = bucket_file.readline().strip().split(",")
+        curr, last = 0, len(raw_indices) - 1
+
+        while curr <= last:
+            raw_index_file.seek(int(raw_indices[curr]))
+            curr_word = raw_index_file.readline().strip().split(" ")[0]
+
+            if curr_word == word:
+                return raw_indices[curr]
+            else:
+                curr += 1
+
+        return -1
+
+
 
 def get_occurrences(word, indices) -> str: ## not done
     korpus_file = open(korpus_path, 'r', encoding="latin-1")
@@ -75,7 +101,7 @@ def get_occurrences(word, indices) -> str: ## not done
 def konkordans(word):
     korpus_indices = []
 
-
+    #raw_index_offset = linear_search_in_file(word)
     raw_index_offset = binary_search_in_file(word)
     if raw_index_offset == -1:
         print("Word does not exist")
