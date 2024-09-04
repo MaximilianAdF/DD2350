@@ -1,4 +1,5 @@
 import cProfile
+import time
 import sys
 
 raw_index_path = '/afs/kth.se/misc/info/kurser/DD2350/data/large01/Public/adk22/labb1/rawindex.txt'
@@ -23,7 +24,7 @@ def three_prefix_hash(word) -> int:
     return hash_idx  * 8
 
 
-def binary_search_in_file(word) -> int:
+def binary_search_in_file(word) -> tuple:
     with open(raw_index_path, 'r', encoding="latin-1") as raw_index_file, \
         open(bucket_path, 'r') as bucket_file, \
         open(hash_path, 'rb') as hash_file:
@@ -44,7 +45,11 @@ def binary_search_in_file(word) -> int:
             curr_word = raw_index_file.readline().strip().split(" ")[0]
 
             if curr_word == word:
-                return raw_indices[mid]
+                end = (bucket_file.readline().strip().split(",")[0] 
+                if mid >= len(raw_indices) - 1 
+                else raw_indices[mid + 1])
+
+                return raw_indices[mid], end
 
             elif curr_word < word:
                 left = mid + 1
@@ -79,7 +84,7 @@ def linear_search_in_file(word) -> int:
             else:
                 curr += 1
 
-        return -1
+        return -1, -1
 
 
 
@@ -102,19 +107,18 @@ def konkordans(word):
     korpus_indices = []
 
     #raw_index_offset = linear_search_in_file(word)
-    raw_index_offset = binary_search_in_file(word)
-    if raw_index_offset == -1:
+    raw_index_start, raw_index_end = binary_search_in_file(word)
+
+    if raw_index_start == -1:
         print("Word does not exist")
         return
 
-    with open(raw_index_path, 'r', encoding="latin-1") as raw_index_file:
-        raw_index_file.seek(int(raw_index_offset))
 
-        while True:
-            line = raw_index_file.readline().strip().split(" ")
-            if line[0] != word: break # Done with the word
-            korpus_indices.append(int(line[1]))
-    
+    with open(raw_index_path, 'r', encoding="latin-1") as raw_index_file:
+        raw_index_file.seek(int(raw_index_start))
+        lines = raw_index_file.read(int(raw_index_end) - int(raw_index_start)).strip().split("\n")
+        korpus_indices = [int(line.strip().split(" ")[1]) for line in lines]
+
 
     print("The word "+ word + " occurs " + str(len(korpus_indices)) + " times.")
     
