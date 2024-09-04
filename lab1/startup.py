@@ -1,21 +1,19 @@
 def WordHash(word: str) -> int:
+    word = word[:3].lower()
     hash_value = 0
-    base = 29  # Since we have 29 characters including å, ä, ö
+    base = 30  # Since we have 29 characters including å, ä, ö
 
     for i, char in enumerate(word):
         if 'a' <= char <= 'z':  # Map a-z
-            char_value = ord(char) - ord('a') +1
-        elif char == 'å':  # Map å to 26
-            char_value = 27
-        elif char == 'ä':  # Map ä to 27
-            char_value = 28
-        elif char == 'ö':  # Map ö to 28
-            char_value = 29
+            hash_value+= (base**i)*(ord(char)-ord('a')+1)
+        elif char == 'å':  # Map å to 27
+            hash_value+= (base**i)*(27)
+        elif char == 'ä':  # Map ä to 28
+            hash_value+= (base**i)*(28)
+        elif char == 'ö':  # Map ö to 29
+            hash_value+= (base**i)*(29)
         else:
             raise ValueError(f"Unsupported character: {char}")
-
-        # Calculate the hash, considering the character position
-        hash_value +=  char_value *(base**(len(word)-i -1))
 
     return hash_value -1
 
