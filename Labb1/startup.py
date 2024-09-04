@@ -1,6 +1,6 @@
 raw_index_path = '/afs/kth.se/misc/info/kurser/DD2350/data/large01/Public/adk22/labb1/rawindex.txt'
-bucket_path = '/home/m/a/maadf/Documents/DD2350/lab1/bucket.txt'
-hash_path = '/home/m/a/maadf/Documents/DD2350/lab1/hash.txt'
+bucket_path = '/home/m/a/maadf/Documents/DD2350/Labb1/bucket.txt' #'/var/tmp/bucket.txt
+hash_path = '/home/m/a/maadf/Documents/DD2350/Labb1/hash.txt' #'/var/tmp/hash.txt'
 
 
 def three_prefix_hash(word) -> int:

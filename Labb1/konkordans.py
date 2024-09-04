@@ -1,27 +1,12 @@
+from startup import three_prefix_hash
 import cProfile
 import time
 import sys
 
 raw_index_path = '/afs/kth.se/misc/info/kurser/DD2350/data/large01/Public/adk22/labb1/rawindex.txt'
 korpus_path = '/afs/kth.se/misc/info/kurser/DD2350/data/large01/Public/adk22/labb1/korpus'
-bucket_path = '/home/m/a/maadf/Documents/DD2350/lab1/bucket.txt'
-hash_path = '/home/m/a/maadf/Documents/DD2350/lab1/hash.txt'
-
-def three_prefix_hash(word) -> int:
-    prefix = word[:3].lower()
-    hash_idx  = 0
-
-    for i, char in enumerate(prefix):
-        if 'a' <= char <= 'z':  # Map a-z
-            hash_idx += (30**i) * (ord(char) - ord('a') + 1)
-        elif char == 'å':  # Map å to 27
-            hash_idx += (30**i) * (27)
-        elif char == 'ä':  # Map ä to 28
-            hash_idx += (30**i) * (28)
-        elif char == 'ö':  # Map ö to 29
-            hash_idx += (30**i) * (29)
-
-    return hash_idx  * 8
+bucket_path = '/home/m/a/maadf/Documents/DD2350/Labb1/bucket.txt' #'/var/tmp/bucket.txt
+hash_path = '/home/m/a/maadf/Documents/DD2350/Labb1/hash.txt' #'/var/tmp/hash.txt'
 
 
 def binary_search_in_file(word) -> tuple:
@@ -123,7 +108,7 @@ def print_occurences(start, end):
 def konkordans(word):
     #raw_index_offset = linear_search_in_file(word)
     raw_index_start, raw_index_end = binary_search_in_file(word)
-    should_print = True
+    print_all = True
 
     if raw_index_start == -1:
         print("Word does not exist")
@@ -138,9 +123,9 @@ def konkordans(word):
     print("The word '"+ word + "' occurs " + str(occurences) + " times.")
     if (occurences > 25):
         answer = input("Print all occurences? Y/N: ").lower()
-        should_print = (answer == 'y')
+        print_all = (answer == 'y')
 
-    if should_print:
+    if print_all:
         print_occurences(raw_index_start, raw_index_end)
 
 
