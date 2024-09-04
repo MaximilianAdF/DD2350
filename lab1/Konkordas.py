@@ -82,9 +82,4 @@ def Konkordans():
         PrintRows(rows)
 
 
-
-
-
 Konkordans()
-
-
