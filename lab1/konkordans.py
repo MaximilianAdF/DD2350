@@ -49,7 +49,7 @@ def binary_search_in_file(word) -> tuple:
                 if mid >= len(raw_indices) - 1 
                 else raw_indices[mid + 1])
 
-                return raw_indices[mid], end
+                return int(raw_indices[mid]), int(end)
 
             elif curr_word < word:
                 left = mid + 1
@@ -57,7 +57,7 @@ def binary_search_in_file(word) -> tuple:
             else:
                 right = mid - 1
 
-        return -1
+        return -1, -1
 
 
 def linear_search_in_file(word) -> int:
@@ -102,40 +102,53 @@ def get_occurrences(word, indices) -> str: ## not done
     return occurrence_text
 
 
+def print_occurences(start, end):
+    raw_index_file = open(raw_index_path, 'r', encoding="latin-1")
+    korpus_file = open(korpus_path, 'r', encoding="latin-1")
+    n = 30 # number of characters to print before and after the word
+
+    raw_index_file.seek(start)
+    curr_pos = start
+
+    while curr_pos < end:
+        raw_line = raw_index_file.readline()
+        line = raw_line.strip().split(" ")
+        curr_pos += len(raw_line)
+
+        korpus_file.seek( max( int(line[1]) - n, 0) )
+        print(korpus_file.read( (2 * n) + len(line[0]) ).replace("\n", " "))
+
+
 
 def konkordans(word):
-    korpus_indices = []
-
     #raw_index_offset = linear_search_in_file(word)
     raw_index_start, raw_index_end = binary_search_in_file(word)
+    should_print = True
 
     if raw_index_start == -1:
         print("Word does not exist")
         return
 
-
     with open(raw_index_path, 'r', encoding="latin-1") as raw_index_file:
         raw_index_file.seek(int(raw_index_start))
-        lines = raw_index_file.read(int(raw_index_end) - int(raw_index_start)).strip().split("\n")
-        korpus_indices = [int(line.strip().split(" ")[1]) for line in lines]
+        occurences = raw_index_file.read(int(raw_index_end) - int(raw_index_start)).count('\n')
 
 
-    print("The word "+ word + " occurs " + str(len(korpus_indices)) + " times.")
-    
-    if (len(korpus_indices)>25):
+
+    print("The word '"+ word + "' occurs " + str(occurences) + " times.")
+    if (occurences > 25):
         answer = input("Print all occurences? Y/N: ").lower()
-        if answer.lower() == "y":
-            print(get_occurrences(word, korpus_indices))
-        else:
-            print(get_occurrences(word, korpus_indices[:25]))
-    else:
-        print(get_occurrences(word, korpus_indices))
+        should_print = (answer == 'y')
+
+    if should_print:
+        print_occurences(raw_index_start, raw_index_end)
 
 
 
 if __name__ == "__main__":
     if len(sys.argv) == 2:
-        cProfile.run("konkordans(sys.argv[1].lower())")
+        #cProfile.run("konkordans(sys.argv[1].lower())")
+        konkordans(sys.argv[1].lower())
     else:
         print("Usage: python3 konkordans.py <word>")
         sys.exit(1)
