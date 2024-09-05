@@ -28,8 +28,62 @@ def binary_search_in_file(word) -> tuple:
             mid = left + (right - left) // 2
             raw_index_file.seek(int(raw_indices[mid]))
             curr_word = raw_index_file.readline().strip().split(" ")[0]
-            if(right-left)< 1000:
+            if(right-left)< 10:
                 return linear_search_in_file(word)
+
+            if curr_word == word:
+                end = (bucket_file.readline().strip().split(",")[0] 
+                if mid >= len(raw_indices) - 1 
+                else raw_indices[mid + 1])
+
+                return int(raw_indices[mid]), int(end)
+
+            elif curr_word < word:
+                left = mid + 1
+
+            else:
+                right = mid - 1
+
+        return -1, -1
+
+def binary_and_linear_in_file(word) -> tuple:
+    with open(raw_index_path, 'r', encoding="latin-1") as raw_index_file, \
+        open(bucket_path, 'r') as bucket_file, \
+        open(hash_path, 'rb') as hash_file:
+
+
+        hash_file.seek(three_prefix_hash(word))
+        hash_data = hash_file.read(8)
+
+        bucket_offset = int.from_bytes(hash_data, byteorder='big')
+        bucket_file.seek(bucket_offset)
+
+        raw_indices = bucket_file.readline().strip().split(",")
+        left, right = 0, len(raw_indices) - 1
+
+        while left <= right:
+            
+            mid = left + (right - left) // 2
+            raw_index_file.seek(int(raw_indices[mid]))
+            curr_word = raw_index_file.readline().strip().split(" ")[0]
+            if(right-left)< 100:
+                curr = left
+                last = right
+                while curr <= last:
+                    raw_index_file.seek(int(raw_indices[curr]))
+                    curr_word = raw_index_file.readline().strip().split(" ")[0]
+
+                    if curr_word == word:
+                        end = (bucket_file.readline().strip().split(",")[0] 
+                        if curr >= len(raw_indices) - 1
+                        else raw_indices[curr + 1])
+
+                        return int(raw_indices[curr]), int(end)
+                    else:
+                        curr += 1
+
+                return -1, -1
+                
 
             if curr_word == word:
                 end = (bucket_file.readline().strip().split(",")[0] 
