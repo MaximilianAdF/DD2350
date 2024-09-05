@@ -73,7 +73,7 @@ def linear_search_in_file(word) -> int:
 
 
 
-def get_occurrences(word, indices) -> str: ## not done
+def get_occurrences(word, indices) -> str: # deprecated
     korpus_file = open(korpus_path, 'r', encoding="latin-1")
     occurrence_text = ""
     n = 30 # number of characters to print before and after the word
@@ -103,9 +103,13 @@ def print_occurences(start, end):
         korpus_file.seek( max( int(line[1]) - n, 0) )
         print(korpus_file.read( (2 * n) + len(line[0]) ).replace("\n", " "))
 
+    raw_index_file.close()
+    korpus_file.close()
 
 
 def konkordans(word):
+    time_start = time.time()
+    
     #raw_index_offset = linear_search_in_file(word)
     raw_index_start, raw_index_end = binary_search_in_file(word)
     print_all = True
@@ -116,10 +120,10 @@ def konkordans(word):
 
     with open(raw_index_path, 'r', encoding="latin-1") as raw_index_file:
         raw_index_file.seek(int(raw_index_start))
-        occurences = raw_index_file.read(int(raw_index_end) - int(raw_index_start)).count('\n')
+        occurences = raw_index_file.read(int(raw_index_end) - int(raw_index_start)).count("\n")
 
 
-
+    print("Time elapsed: " + str(time.time() - time_start) + " seconds.")
     print("The word '"+ word + "' occurs " + str(occurences) + " times.")
     if (occurences > 25):
         answer = input("Print all occurences? Y/N: ").lower()
