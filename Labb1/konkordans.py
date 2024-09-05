@@ -65,7 +65,11 @@ def linear_search_in_file(word) -> int:
             curr_word = raw_index_file.readline().strip().split(" ")[0]
 
             if curr_word == word:
-                return raw_indices[curr]
+                end = (bucket_file.readline().strip().split(",")[0] 
+                if curr >= len(raw_indices) - 1
+                else raw_indices[curr + 1])
+
+                return int(raw_indices[curr]), int(end)
             else:
                 curr += 1
 
