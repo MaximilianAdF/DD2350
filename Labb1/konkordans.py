@@ -28,6 +28,8 @@ def binary_search_in_file(word) -> tuple:
             mid = left + (right - left) // 2
             raw_index_file.seek(int(raw_indices[mid]))
             curr_word = raw_index_file.readline().strip().split(" ")[0]
+            if(right-left)< 1000:
+                return linear_search_in_file(word)
 
             if curr_word == word:
                 end = (bucket_file.readline().strip().split(",")[0] 
