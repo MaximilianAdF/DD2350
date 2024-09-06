@@ -1,5 +1,4 @@
 from startup import three_prefix_hash
-import cProfile
 import time
 import sys
 
@@ -33,6 +32,8 @@ def binary_search_in_file(word) -> tuple:
                 end = (bucket_file.readline().strip().split(",")[0] 
                 if mid >= len(raw_indices) - 1 
                 else raw_indices[mid + 1])
+                if not end: # If we have reached the end of the bucket set end to the last char of the file
+                    end = int(raw_index_file.seek(0, 2))
 
                 return int(raw_indices[mid]), int(end)
 
@@ -75,6 +76,8 @@ def binary_and_linear_in_file(word) -> tuple:
                         end = (bucket_file.readline().strip().split(",")[0] 
                         if curr >= len(raw_indices) - 1
                         else raw_indices[curr + 1])
+                        if not end:
+                            end = int(raw_index_file.seek(0, 2))
 
                         return int(raw_indices[curr]), int(end)
                     else:
@@ -122,6 +125,8 @@ def linear_search_in_file(word) -> int:
                 end = (bucket_file.readline().strip().split(",")[0] 
                 if curr >= len(raw_indices) - 1
                 else raw_indices[curr + 1])
+                if not end:
+                    end = int(raw_index_file.seek(0, 2))
 
                 return int(raw_indices[curr]), int(end)
             else:
@@ -137,14 +142,21 @@ def print_occurences(start, end):
 
     raw_index_file.seek(start)
     curr_pos = start
+    count = 0
 
     while curr_pos < end:
         raw_line = raw_index_file.readline()
         line = raw_line.strip().split(" ")
         curr_pos += len(raw_line)
+        count += 1
 
         korpus_file.seek( max( int(line[1]) - n, 0) )
         print(korpus_file.read( (2 * n) + len(line[0]) ).replace("\n", " "))
+
+        if (count == 25): # Print first 25 occurences, then ask user if they want to print more
+            answer = input("Print all occurences? Y/N: ").lower()
+            if (answer != 'y'):
+                break
 
     raw_index_file.close()
     korpus_file.close()
@@ -152,11 +164,7 @@ def print_occurences(start, end):
 
 def konkordans(word):
     time_start = time.time()
-    
-    #raw_index_start, raw_index_end = linear_search_in_file(word)
-    #raw_index_start, raw_index_end = binary_and_linear_in_file(word)
     raw_index_start, raw_index_end = binary_search_in_file(word)
-    print_all = True
 
     if raw_index_start == -1:
         print("Word does not exist")
@@ -169,18 +177,12 @@ def konkordans(word):
 
     print("Time elapsed: " + str(time.time() - time_start) + " seconds.")
     print("The word '"+ word + "' occurs " + str(occurences) + " times.")
-    if (occurences > 25):
-        answer = input("Print all occurences? Y/N: ").lower()
-        print_all = (answer == 'y')
-
-    if print_all:
-        print_occurences(raw_index_start, raw_index_end)
+    print_occurences(raw_index_start, raw_index_end)
 
 
 
 if __name__ == "__main__":
     if len(sys.argv) == 2:
-        #cProfile.run("konkordans(sys.argv[1].lower())")
         konkordans(sys.argv[1].lower())
     else:
         print("Usage: python3 konkordans.py <word>")

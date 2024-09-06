@@ -1,3 +1,5 @@
+import time
+
 raw_index_path = '/afs/kth.se/misc/info/kurser/DD2350/data/large01/Public/adk22/labb1/rawindex.txt'
 bucket_path = '/home/m/a/maadf/Documents/DD2350/Labb1/bucket.txt' #'/var/tmp/bucket.txt
 hash_path = '/home/m/a/maadf/Documents/DD2350/Labb1/hash.txt' #'/var/tmp/hash.txt'
@@ -10,11 +12,11 @@ def three_prefix_hash(word) -> int:
     for i, c in enumerate(prefix):
         if ord(c) >= ord('a') and ord(c) <= ord('z'): # a-z, UTF-8 97-122
             hash_idx += (30**i) * (ord(c) - ord('a') + 1)
-        elif ord(c) == ord('å'):
+        elif c == 'å':
             hash_idx += (30**i) * 27 # å, UTF-8 229
-        elif ord(c) == ord('ä'):
+        elif c == 'ä':
             hash_idx += (30**i) * 28 # ä, UTF-8 228
-        elif ord(c) == ord('ö'):
+        elif c == 'ö':
             hash_idx += (30**i) * 29 # ö, UTF-8 246
 
     return hash_idx * 8
@@ -25,7 +27,7 @@ def setup_struct():
     file_out = open(bucket_path, 'w')
     hash_out = open(hash_path, 'wb')
 
-    hash_size = (three_prefix_hash('ööö') + 1) * 8
+    hash_size = (27931*8)
     hash_out.truncate(hash_size)
 
     indices = [0]
@@ -46,6 +48,10 @@ def setup_struct():
 
         #check if its the end of file
         if not line:
+            hash_idx = three_prefix_hash(prev_word)
+            hash_out.seek(hash_idx)
+            hash_out.write(out_pos.to_bytes(8, byteorder='big'))
+    
             file_out.write(",".join(map(str, indices)) + "\n")
             file_in.close()
             file_out.close()
