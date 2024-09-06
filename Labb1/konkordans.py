@@ -28,8 +28,6 @@ def binary_search_in_file(word) -> tuple:
             mid = left + (right - left) // 2
             raw_index_file.seek(int(raw_indices[mid]))
             curr_word = raw_index_file.readline().strip().split(" ")[0]
-            if(right-left)< 10:
-                return linear_search_in_file(word)
 
             if curr_word == word:
                 end = (bucket_file.readline().strip().split(",")[0] 
@@ -66,7 +64,7 @@ def binary_and_linear_in_file(word) -> tuple:
             mid = left + (right - left) // 2
             raw_index_file.seek(int(raw_indices[mid]))
             curr_word = raw_index_file.readline().strip().split(" ")[0]
-            if(right-left)< 100:
+            if(right-left)< 1000:
                 curr = left
                 last = right
                 while curr <= last:
@@ -132,21 +130,6 @@ def linear_search_in_file(word) -> int:
         return -1, -1
 
 
-
-def get_occurrences(word, indices) -> str: # deprecated
-    korpus_file = open(korpus_path, 'r', encoding="latin-1")
-    occurrence_text = ""
-    n = 30 # number of characters to print before and after the word
-
-    for idx in indices:
-        korpus_file.seek(max(idx-n, 0))
-        line = korpus_file.read(60+len(word)).replace("\n", " ")
-        occurrence_text += line + "\n"  
-    
-    korpus_file.close()
-    return occurrence_text
-
-
 def print_occurences(start, end):
     raw_index_file = open(raw_index_path, 'r', encoding="latin-1")
     korpus_file = open(korpus_path, 'r', encoding="latin-1")
@@ -170,7 +153,8 @@ def print_occurences(start, end):
 def konkordans(word):
     time_start = time.time()
     
-    #raw_index_offset = linear_search_in_file(word)
+    #raw_index_start, raw_index_end = linear_search_in_file(word)
+    #raw_index_start, raw_index_end = binary_and_linear_in_file(word)
     raw_index_start, raw_index_end = binary_search_in_file(word)
     print_all = True
 
