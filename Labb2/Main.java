@@ -5,9 +5,7 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.File;
-import java.io.FileReader;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -32,7 +30,7 @@ public class Main {
     if (parseArgs(args)) {
       System.exit(0);
     }
-    //    long t1 = System.currentTimeMillis();
+    long t1 = System.currentTimeMillis();
     BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in, "UTF-8"));
     // Säkrast att specificera att UTF-8 ska användas, för vissa system har annan
     // standardinställning för teckenkodningen.
@@ -45,8 +43,8 @@ public class Main {
         System.out.print(" " + w);
       System.out.println();
     }
-    //    long tottime = (System.currentTimeMillis() - t1);
-    //    System.out.println("CPU time: " + tottime + " ms");
+    long tottime = (System.currentTimeMillis() - t1);
+    System.out.println("CPU time: " + tottime + " ms");
 
   }
 
