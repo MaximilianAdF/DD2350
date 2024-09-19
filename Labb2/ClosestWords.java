@@ -6,7 +6,6 @@ import java.util.List;
 
 public class ClosestWords {
   LinkedList<String> closestWords = null;
-  int[][] prevDp = null;
   String dpWord = null;
   int closestDistance = -1;
   int[][] Dp = new int[41][41];
@@ -37,7 +36,7 @@ public class ClosestWords {
     }
 
     
-    int lowestRowDistance = 100;
+    int lowestRowDistance = Integer.MAX_VALUE; 
     for (int r = 1; r <= w1len; r++) {
       lowestRowDistance = Integer.MAX_VALUE; // Reset for each row
       for (int c = c2; c <= w2len; c++) {
