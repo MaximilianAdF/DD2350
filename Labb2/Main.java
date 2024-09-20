@@ -22,7 +22,7 @@ public class Main {
 
   public static void main(String args[]) throws IOException {
     long t1 = System.currentTimeMillis();
-    BufferedReader stdin = new BufferedReader(new FileReader("Labb2\\ordlista.txt"));
+    BufferedReader stdin = new BufferedReader(new FileReader("ordlista.txt"));
     // Säkrast att specificera att UTF-8 ska användas, för vissa system har annan
     // standardinställning för teckenkodningen.
     List<String> wordList = readWordList(stdin);

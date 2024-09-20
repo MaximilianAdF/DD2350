@@ -24,12 +24,12 @@ public class ClosestWords {
     int w1len = w1.length();
     int w2len = w2.length();
 
-		int c2 = 1;
+		int cskip = 1;
 		
     if(dpWord != null ) {
       for(int i = 0; i <= Math.min(w2len, dpWord.length())-1; i++){
         if (w2.charAt(i) == dpWord.charAt(i))
-          c2++;
+          cskip++;
         else
           break;
       }
@@ -39,24 +39,19 @@ public class ClosestWords {
     int lowestRowDistance = Integer.MAX_VALUE; 
     for (int r = 1; r <= w1len; r++) {
       lowestRowDistance = Integer.MAX_VALUE; // Reset for each row
-      for (int c = c2; c <= w2len; c++) {
+      for (int c = cskip; c <= w2len; c++) {
           int t = (w1.charAt(r - 1) != w2.charAt(c - 1)) ? 1 : 0;
           Dp[r][c] = Math.min(Math.min(Dp[r - 1][c] + 1, Dp[r][c - 1] + 1), Dp[r - 1][c - 1] + t);
           // Track the lowest distance in this row
-          if (Dp[r][c] < lowestRowDistance) {
-              lowestRowDistance = Dp[r][c];
-          }
       }
-      //cheack current row before c2
-      for (int c = 0 ; c<= c2;c++){
+      //cheack current row before cskip
+      for (int c = 1 ; c<= w2len;c++){
         if (Dp[r][c] < lowestRowDistance) {
           lowestRowDistance = Dp[r][c];
         }
       }
 
-
-      if (lowestRowDistance > closestDistance && closestDistance != -1) {
-
+      if (lowestRowDistance > closestDistance && closestDistance != -1) { //check if the lowest amount of steps are larger than previus min dist
           dpWord = w2;
           return 100; // Set an impossibly high value to skip further comparison
       }
@@ -82,7 +77,7 @@ public class ClosestWords {
         closestWords.add(s);
       }
     }
-    System.err.println("Closest words: " + closestWords);
+    //System.err.println("Closest words: " + closestWords);
   }
 
   int getMinDistance() {
