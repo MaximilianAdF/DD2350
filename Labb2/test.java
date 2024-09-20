@@ -4,6 +4,7 @@ import java.util.List;
 public class test {
     public static void main(String[] args) {
         List<String> wordList = new LinkedList<String>();
+        wordList.add()
 
 
 

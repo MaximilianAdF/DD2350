@@ -45,16 +45,6 @@ public class ClosestWords {
           // Track the lowest distance in this row
       }
       //cheack current row before cskip
-      for (int c = 1 ; c<= w2len;c++){
-        if (Dp[r][c] < lowestRowDistance) {
-          lowestRowDistance = Dp[r][c];
-        }
-      }
-
-      if (lowestRowDistance > closestDistance && closestDistance != -1) { //check if the lowest amount of steps are larger than previus min dist
-          dpWord = w2;
-          return 100; // Set an impossibly high value to skip further comparison
-      }
   }
 		dpWord = w2;
 		return Dp[w1len][w2len];
