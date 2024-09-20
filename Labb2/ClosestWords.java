@@ -4,29 +4,29 @@
 import java.util.LinkedList;
 import java.util.List;
 
+//optimering 0: inget har tidskomplexitet av O(3^n)
+
+
+//optimering 1: gjorde om programmet till dynamiskt istället för recursivt
+// har tids komplexitet av O(n*m) n är det felstavade ordet
+
+//optimering 2: om två ord efter varandra började med samma x bokstäver börja räkna från column x
+// har tids komplexitet av O(n*m)  potencielt inget eller mycket
+ 
+
+
 public class ClosestWords {
   LinkedList<String> closestWords = null;
   String dpWord = null;
   int closestDistance = -1;
   int[][] Dp = new int[41][41];
 
-  //temp
-  public static void printMatrix(int[][] matrix) {
-    for (int[] row : matrix) {
-        for (int value : row) {
-            System.out.print(value + " ");
-        }
-        System.out.println(); // Move to the next line after printing a row
-    }
-  }
-
   int partDist(String w1, String w2) { //w1 är felstavade ordet, w2 är ordet vi jämför med
     int w1len = w1.length();
     int w2len = w2.length();
-
 		int cskip = 1;
 		
-    if(dpWord != null ) {
+    if(dpWord != null ) { //kollar antalet bokstäver som är samma som förra ordet
       for(int i = 0; i <= Math.min(w2len, dpWord.length())-1; i++){
         if (w2.charAt(i) == dpWord.charAt(i))
           cskip++;
@@ -35,28 +35,21 @@ public class ClosestWords {
       }
     }
 
-    
-    int lowestRowDistance = Integer.MAX_VALUE; 
-    for (int r = 1; r <= w1len; r++) {
-      lowestRowDistance = Integer.MAX_VALUE; // Reset for each row
+    for (int r = 1; r <= w1len; r++) { //bygger matrisen
       for (int c = cskip; c <= w2len; c++) {
           int t = (w1.charAt(r - 1) != w2.charAt(c - 1)) ? 1 : 0;
           Dp[r][c] = Math.min(Math.min(Dp[r - 1][c] + 1, Dp[r][c - 1] + 1), Dp[r - 1][c - 1] + t);
-          // Track the lowest distance in this row
       }
-      //cheack current row before cskip
+
   }
 		dpWord = w2;
 		return Dp[w1len][w2len];
 	}
 
 
-
-
   public ClosestWords(String w, List<String> wordList) {
     init();
     for (String s : wordList) {
-      //int dist = distance(w, s);
       int dist = partDist(w, s);
       if (dist < closestDistance || closestDistance == -1) {
         closestDistance = dist;
@@ -67,7 +60,6 @@ public class ClosestWords {
         closestWords.add(s);
       }
     }
-    //System.err.println("Closest words: " + closestWords);
   }
 
   int getMinDistance() {
@@ -78,7 +70,7 @@ public class ClosestWords {
     return closestWords;
   }
   private void init() {
-		for(int i=0; i<=40; i++)	Dp[i][0] =Dp[0][i]  = i;
+		for(int i = 0; i <= 40; i++)	Dp[i][0] = Dp[0][i]  = i;
 
 	}
 }
