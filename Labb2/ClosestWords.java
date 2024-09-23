@@ -4,73 +4,74 @@
 import java.util.LinkedList;
 import java.util.List;
 
-//optimering 0: inget har tidskomplexitet av O(3^n)
+// Optimering 0: Borttagning av rekursiva partDist med tidskomplexitet av O(3^n)
 
+// Optimering 1: Användning av dynamisk programmering för att reducera antalet "redundant" beräkningar.
+// Nya metoden som sparar beräkningar i en matris och återanvänder dem för att minska antalet beräkningar
+// har tidskomplexitet av O(n*m) där n är längden av ordet w1 och m är längden av ordet w2.
 
-//optimering 1: gjorde om programmet till dynamiskt istället för recursivt
-// har tids komplexitet av O(n*m) n är det felstavade ordet
-
-//optimering 2: om två ord efter varandra började med samma x bokstäver börja räkna från column x
-// har tids komplexitet av O(n*m)  potencielt inget eller mycket
- 
+// Optimering 2: Om två ord efter varandra i ordlistan börjar med x antal samma bokstäver börja man med
+// nästa ord från rad x i föregående ords matris. Detta för att ytterliggare minska antalet beräkningar som görs.
+// Har tids komplexitet av O(n*m) i värsta fall. Kan ge en förbättring av tidkomplexitet ner till O(n) i bästa fall om
+// föregående och nästa ord har i närheten av m första bokstäver som är samma.
 
 
 public class ClosestWords {
-  LinkedList<String> closestWords = null;
+  LinkedList<String> closestWords = new LinkedList<>();
+  int closestDistance = Integer.MAX_VALUE;
+  int[][] dp = new int[41][41];
   String dpWord = null;
-  int closestDistance = -1;
-  int[][] Dp = new int[41][41];
+  
 
-  int partDist(String w1, String w2) { //w1 är felstavade ordet, w2 är ordet vi jämför med
+  private int partDist(String w1, String w2) {
     int w1len = w1.length();
     int w2len = w2.length();
-		int cskip = 1;
+		int x = 1;
 		
-    if(dpWord != null ) { //kollar antalet bokstäver som är samma som förra ordet
-      for(int i = 0; i <= Math.min(w2len, dpWord.length())-1; i++){
-        if (w2.charAt(i) == dpWord.charAt(i))
-          cskip++;
-        else
-          break;
+
+    // Kollar hur många bokstäver som är lika i början av orden
+    if (dpWord != null) {
+      while (x <= Math.min(w2len, dpWord.length()) && w2.charAt(x - 1) == dpWord.charAt(x - 1)) {
+        x++;
       }
     }
 
-    for (int r = 1; r <= w1len; r++) { //bygger matrisen
-      for (int c = cskip; c <= w2len; c++) {
-          int t = (w1.charAt(r - 1) != w2.charAt(c - 1)) ? 1 : 0;
-          Dp[r][c] = Math.min(Math.min(Dp[r - 1][c] + 1, Dp[r][c - 1] + 1), Dp[r - 1][c - 1] + t);
-      }
 
-  }
+    for (int i = x; i <= w2len; i++) {
+      for (int j = 1; j <= w1len; j++) {
+          dp[i][j] = Math.min(dp[i-1][j-1] + (w2.charAt(i-1) != w1.charAt(j-1) ? 1 : 0), 
+                     Math.min(dp[i-1][j] + 1, dp[i][j-1] + 1));
+      }
+    }
+
 		dpWord = w2;
-		return Dp[w1len][w2len];
+		return dp[w2len][w1len];
 	}
 
 
   public ClosestWords(String w, List<String> wordList) {
-    init();
+    // Initiera matrisen
+    for(int i = 0; i <= 40; i++)	dp[i][0] = dp[0][i]  = i;
+
+    // Kollar igenom alla ord i ordlistan och sparar de ord som har minst distans till w
     for (String s : wordList) {
       int dist = partDist(w, s);
-      if (dist < closestDistance || closestDistance == -1) {
+      if (dist < closestDistance) {
         closestDistance = dist;
-        closestWords = new LinkedList<String>();
+        closestWords.clear();
         closestWords.add(s);
-      }
-      else if (dist == closestDistance) {
+      } else if (dist == closestDistance) {
         closestWords.add(s);
       }
     }
   }
 
-  int getMinDistance() {
+
+  public int getMinDistance() {
     return closestDistance;
   }
 
-  List<String> getClosestWords() {
+  public List<String> getClosestWords() {
     return closestWords;
   }
-  private void init() {
-		for(int i = 0; i <= 40; i++)	Dp[i][0] = Dp[0][i]  = i;
-
-	}
 }
