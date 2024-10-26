@@ -1,6 +1,3 @@
-# DD2350
-Professional Python solutions to the Labb1, Labb2, & Labb3 problems in DD2350. <br>
-> [!NOTE]
-> Authors: <br>
-> Maximilian Alvim de Faria <br>
-> Alfred Malmström
+# DD2350 Algorithms, Datastructures & Complexity (9.5hp)
+This repository provides solutions to Labb 1, Labb 2 & Labb 3 in the course.
+Solutions written and approved through the first semester of the third year (2024 fall).
