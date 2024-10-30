@@ -49,7 +49,7 @@ public class maxFlow {
             int u = q.poll();
             
             for (int v : adjList.get(u)) { //skip uselss nodes not adjacent to u
-                if (!visited[v] && restFlow[u][v] > 0) { // Check residual capacity
+                if (!visited[v] && restFlow[u][v] > 0) { // Check rem. capacity
                     visited[v] = true;
                     parent[v] = u;
                     q.add(v);
