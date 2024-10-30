@@ -6,11 +6,11 @@ import java.util.List;
 public class bipMatch {
     Kattio io;
 
+    List<List<Integer>> adjList;
     char[][] graph;
     char[][] flow;
-    List<List<Integer>> adjList;
-    int X, Y, E, V;
 
+    int X, Y, E, V;
     int maxFlow;
     int source;
     int sink;
@@ -126,10 +126,10 @@ public class bipMatch {
             v = sink;
             while (v != source) {
                 int u = parent[v];
-                graph[u][v] = (char) (graph[u][v] - pathFlow);  // Decrease capacity in the graph matrix
-                graph[v][u] = (char) (graph[v][u] + pathFlow);  // Increase capacity for reverse edge
                 flow[u][v] = (char) (flow[u][v] + pathFlow);  // Update flow in the flow matrix
                 flow[v][u] = (char) (flow[v][u] - pathFlow);
+                graph[u][v] = (char) (graph[u][v] - pathFlow);  // Decrease capacity in the graph matrix
+                graph[v][u] = (char) (graph[v][u] + pathFlow);  // Increase capacity for reverse edge
                 v = parent[v];
             }
 

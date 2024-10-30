@@ -109,6 +109,7 @@ public class reduceToFlow {
         readBipartite();
         convertToFlow();
         writeFlow();
+        //Kattis löser med edmonds karps
         readMaxFlow();
         flowToMatching();
 
