@@ -15,7 +15,7 @@ public class graphColRed {
 
     public void convertToCasting() {
         roles = V + 2;
-        actors = C + 2;
+        actors = Math.min(roles, C + 2); // Can never have a need for more actors than roles
         scenes = E + V + 1;
     }
 
