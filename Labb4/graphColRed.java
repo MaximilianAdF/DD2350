@@ -24,18 +24,23 @@ public class graphColRed {
         io.println(scenes);
         io.println(actors);
 
+    // Vilkor typ 1
         // Printing the roles for divas p1 and p2 directly
         io.println("1 1");
         io.println("1 2");
 
-        for (int i = 3; i <= roles; i++) {
-            io.print(actors-2);
-            for (int j = 3; j <= actors; j++) {
-                io.print(" " + j);
-            }
-            io.println();
+        // Create actor string
+        String str = "";
+        for (int j = 3; j <= actors; j++) {
+            str += " " + j;
         }
 
+        // Print all actor assignments
+        for (int i = 3; i <= roles; i++) {
+            io.println((actors-2) + str);
+        }
+
+    // Vilkor typ 2
         // Print all the obligatory scenes
         io.println("2 2 3");
         for (int i = 3; i <= roles; i++) {
