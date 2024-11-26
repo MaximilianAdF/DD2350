@@ -1,27 +1,33 @@
 import java.util.*;
 
-public class heurRole {
+public class betygB {
     // Find two roles that are never together in a scene | Assign them to actors 1 and 2
     // Start with the largest scene and assign actors to the roles greedily
     // Continue in descending order of scene size until all roles have been assigned an actor   
     Kattio io;
 
+
     HashMap<Integer, ArrayList<Integer>> assignedRoles; // Key: Actor, Value: Roles
+    HashMap<Integer, HashSet<Integer>> rollpairs; // Key: roll, value rolles:
     HashMap<Integer, ArrayList<Integer>> actors; // Key: Role, Value: Actors
     ArrayList<Scene> scenes;                     // List of all scenes
+
 
     int div1;
     int div2;
     int n; // Number of roles
     int s; // Number of scenes
     int k; // Number of actors
+    int kstart;
 
     public void readCasting() {
         n = io.getInt();
         s = io.getInt();
         k = io.getInt();
+        kstart = k;
 
         assignedRoles = new HashMap<Integer, ArrayList<Integer>>();
+        rollpairs = new HashMap<Integer, HashSet<Integer>>();
         actors = new HashMap<Integer, ArrayList<Integer>>();
         scenes = new ArrayList<Scene>(s);
 
@@ -41,35 +47,96 @@ public class heurRole {
             }
             scenes.add(scene);
         }
-    }
 
-    public boolean canHave(int actor, int roll){// check if actor can play the roll
         for (Scene scene : scenes) {
-            if (scene.getScene().contains(roll)) {
-                if (actor == 1 && assignedRoles.containsKey(2)) {
-                    for (int r : assignedRoles.get(2)) {
-                        if (scene.getScene().contains(r)) {
-                            return false;
-                        }
-                    }
-                }
-                if (actor == 2 && assignedRoles.containsKey(1)) {
-                    for (int r : assignedRoles.get(1)) {
-                        if (scene.getScene().contains(r)) {
-                            return false;
-                        }
-                    }
-                }
-                
-                for (int role : scene.getScene()) {
-                    if (roll != role && assignedRoles.containsKey(actor) && assignedRoles.get(actor).contains(role)) { // Actor already has a role in the scene
-                        return false;
+            ArrayList<Integer> rolesInScene = scene.getScene();
+            for (int role : rolesInScene) {
+                rollpairs.computeIfAbsent(role, k -> new HashSet<>());
+                for (int otherRole : rolesInScene) {
+                    if (role != otherRole) {
+                        rollpairs.get(role).add(otherRole);
                     }
                 }
             }
         }
+    }
+    
+
+    public void localHeru() {
+        // Swap roles between actors
+        for (int i = 3; i <= kstart; i++){
+            for (int j = i+1; j <= kstart; j++){
+                transferRoles(i,j);
+            }
+        }
+
+        // Remove superskådisar
+        for (int i = kstart+1; i <= assignedRoles.size(); i++){
+            for (int j = 1; j <= kstart; j++){
+                transferRoles(i,j);
+            }
+        }
+
+        // Remove empty actors
+        Iterator<Map.Entry<Integer, ArrayList<Integer>>> iterator = assignedRoles.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Integer, ArrayList<Integer>> entry = iterator.next();
+            if (entry.getValue().isEmpty()) {
+                iterator.remove();
+            }
+        }
+    }
+
+
+    public void transferRoles(int actorA, int actorB){
+        if (assignedRoles.containsKey(actorA)) {
+            List<Integer> rolesToTransfer = new ArrayList<>();
+            Iterator<Integer> iterator = assignedRoles.get(actorA).iterator();
+            while (iterator.hasNext()) {
+                int role = iterator.next();
+                if (canHave(actorB, role) && actors.get(role).contains(actorB)) {
+                    rolesToTransfer.add(role);
+                    iterator.remove();
+                }
+            }
+            assignedRoles.computeIfAbsent(actorB, k -> new ArrayList<>());
+            assignedRoles.get(actorB).addAll(rolesToTransfer);
+        }
+    }
+    
+
+    
+    public boolean canHave(int actor, int roll){// check if actor can play the roll
+            if (actor == 1 && assignedRoles.containsKey(2)) {
+                for (int r : assignedRoles.get(2)) {
+                    if (rollpairs.get(roll).contains(r)) {
+                        return false;
+                    }
+                }
+            }
+            if (actor == 2 && assignedRoles.containsKey(1)) {
+                for (int r : assignedRoles.get(1)) {
+                    if (rollpairs.get(roll).contains(r)) {
+                        return false;
+                    }
+                }
+            }
+
+            if (assignedRoles.containsKey(actor)){
+                for (int role : assignedRoles.get(actor)) {
+                    if (rollpairs.get(roll).contains(role)) { // Actor already has a role in the scene
+                        return false;
+                    }
+                }
+            } else {
+                return true;
+            }
+        
         return true;
     }
+
+
+
 public void giveDivasRolls() {
     // Step 1: Retrieve allowed roles for actors 1 and 2
     ArrayList<Integer> allowedRolesForActor1 = new ArrayList<>();
@@ -90,29 +157,17 @@ public void giveDivasRolls() {
     // Step 2: Find two roles that are valid and never appear together in a scene
     int roleForActor1 = -1, roleForActor2 = -1;
 
+    outerLoop:
     for (int role1 : allowedRolesForActor1) {
         for (int role2 : allowedRolesForActor2) {
             if (role1 == role2) continue; // Skip if both roles are the same
 
-            boolean neverTogether = true;
-
-            // Check all scenes to see if these roles are ever together
-            for (Scene scene : scenes) {
-                if (scene.getScene().contains(role1) && scene.getScene().contains(role2)) {
-                    neverTogether = false;
-                    break;
-                }
-            }
-
-            // If valid pair is found, assign roles and exit loops
-            if (neverTogether) {
+            // Check if these roles are ever together using rollpairs
+            if (!rollpairs.get(role1).contains(role2) && !rollpairs.get(role2).contains(role1)) {
                 roleForActor1 = role1;
                 roleForActor2 = role2;
-                break;
+                break outerLoop;
             }
-        }
-        if (roleForActor1 != -1 && roleForActor2 != -1) {
-            break;
         }
     }
 
@@ -147,6 +202,7 @@ public void giveDivasRolls() {
                 }
             }
             if (!given){ // skapar en ny om inget av de givna fungerar
+
                 assignedRoles.put(k + 1, new ArrayList<Integer>());
                 assignedRoles.get(k + 1).add(roll);
                 k++;
@@ -167,17 +223,18 @@ public void giveDivasRolls() {
         }
     }
 
-    public heurRole() {
+    public betygB() {
         io = new Kattio(System.in, System.out);
         readCasting();
         giveDivasRolls();
         giveRolls();
+        localHeru();
         print();
         io.close();
     }   
 
     public static void main(String[] args) {
-        new heurRole();
+        new betygB();
     }
 }
 
