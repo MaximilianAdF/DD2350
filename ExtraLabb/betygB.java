@@ -68,6 +68,8 @@ public class betygB {
             for (int j = i+1; j <= kstart; j++){
                 transferRoles(i,j);
             }
+            transferRoles(i, 1);
+            transferRoles(i, 2);
         }
 
         // Remove superskådisar
@@ -89,17 +91,16 @@ public class betygB {
 
 
     public void transferRoles(int actorA, int actorB){
-        if (assignedRoles.containsKey(actorA)) {
+        if (assignedRoles.containsKey(actorA) && assignedRoles.containsKey(actorB)) {
             List<Integer> rolesToTransfer = new ArrayList<>();
             Iterator<Integer> iterator = assignedRoles.get(actorA).iterator();
             while (iterator.hasNext()) {
                 int role = iterator.next();
-                if (canHave(actorB, role) && actors.get(role).contains(actorB)) {
+                if (canHave(actorB, role) && actors.get(role).contains(actorB)) { // Actor B can have the role and has it in their list of allowed roles
                     rolesToTransfer.add(role);
                     iterator.remove();
                 }
             }
-            assignedRoles.computeIfAbsent(actorB, k -> new ArrayList<>());
             assignedRoles.get(actorB).addAll(rolesToTransfer);
         }
     }
@@ -128,8 +129,6 @@ public class betygB {
                         return false;
                     }
                 }
-            } else {
-                return true;
             }
         
         return true;

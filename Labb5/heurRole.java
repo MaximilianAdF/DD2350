@@ -1,9 +1,6 @@
 import java.util.*;
 
 public class heurRole {
-    // Find two roles that are never together in a scene | Assign them to actors 1 and 2
-    // Start with the largest scene and assign actors to the roles greedily
-    // Continue in descending order of scene size until all roles have been assigned an actor   
     Kattio io;
 
     HashMap<Integer, ArrayList<Integer>> assignedRoles; // Key: Actor, Value: Roles
